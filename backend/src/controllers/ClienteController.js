@@ -23,7 +23,12 @@ class ClienteController {
                 clientes = rows;
             }
 
-            return res.json(clientes)
+            const clientesDecrypt = clientes.map((clientes) => ({
+                ...clientes,
+                cpf: cryptoService.decrypt(clientes.cpf)
+            }))
+
+            return res.json(clientesDecrypt)
 
         } catch (error) {
             console.error('Ocorreu um erro', error);

@@ -2,23 +2,6 @@ import { useEffect, useState } from "react";
 import AgendamentoForm from "../components/AgendamentoForm.jsx";
 import AlterarDataFotm from "../components/AlterarDataForm.jsx"
 
-// const agendamentosMockados = [
-//     // {
-//     //     id: 1,
-//     //     veiculoId: 1,
-//     //     dataAgendamento: "2026-10-31T09:00:00",
-//     //     descricaoServico: "Troca de óleo",
-//     //     status: "Agendado"
-//     // },
-//     // {
-//     //     id: 2,
-//     //     veiculoId: 2,
-//     //     dataAgendamento: "2026-10-31T14:30:00",
-//     //     descricaoServico: "Trocar o motor, o último explodiu",
-//     //     status: "Agendado"
-//     // }
-// ]
-
 const veiculosMockados = [
     {
         id: 1,
@@ -38,6 +21,15 @@ const veiculosMockados = [
     }
 ]
 
+const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+
+    return {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+};
+
 export default function AgendamentosPage() {
     const [agendamentos, setAgendamentos] = useState([]);
     const [veiculos, setVeiculos] = useState(veiculosMockados);
@@ -48,9 +40,7 @@ export default function AgendamentosPage() {
 
             const resposta = await fetch('http://localhost:3001/api/agendamentos', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify(dadosAgendamento)
                 })
 

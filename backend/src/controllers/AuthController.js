@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import pool from "../config/database.js"
+import { tokensInvalidados } from '../middlewares/authMiddleware.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -48,4 +49,18 @@ async function login(req, res) {
     }
 }
 
-export default { login }
+async function logout(req, res) {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token) {
+        tokensInvalidados.add(token);
+    }
+
+    return res.status(200).json({ message: 'Sessão encerrada com sucesso' })
+}
+
+async function me(req, res) {
+    return res.json({ usuario: req.usuario })
+}
+
+export default { login, logout, me }

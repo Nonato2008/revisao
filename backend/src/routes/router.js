@@ -14,6 +14,9 @@ router.post('/login', AuthController.login);
 
 router.use(authMiddleware)
 
+router.post('/logout', AuthController.logout);
+router.get('/me', AuthController.me);
+
 //ROtas para o cliente
 router.get('/clientes', ClienteController.listar)
 router.post('/clientes', ClienteController.criar)

@@ -1,41 +1,14 @@
 import { useState, useEffect } from "react";
 import VeiculoForm from "../components/VeiculoForm.jsx";
 
-// const clienteMockados = [
-//     {
-//         id: 1,
-//         nome: 'Maycon',
-//         cpf: "123.456.789-10",
-//         telefone: "4003-8922",
-//         email: "maycon@gmail.com"
-//     },
-//     {
-//         id: 2,
-//         nome: 'Pereira',
-//         cpf: "987.456.789-10",
-//         telefone: "0800-8922",
-//         email: "pereirinha@gmail.com"
-//     }
-// ]
+const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
 
-// const veiculosMockados = [
-//     {
-//         id: 1,
-//         placa: "ABC-1234",
-//         modelo: "Palio",
-//         marca: "Fiat",
-//         ano: 2008,
-//         clienteId: 1
-//     },
-//     {
-//         id: 2,
-//         placa: "XYZ-1234",
-//         modelo: "Jetta",
-//         marca: "Volkswagen",
-//         ano: 2008,
-//         clienteId: 2
-//     }
-// ]
+    return {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+};
 
 export default function VeiculosPage() {
     const [clientes, setClientes] = useState([]);
@@ -47,9 +20,7 @@ export default function VeiculosPage() {
 
             const resposta = await fetch('http://localhost:3001/api/veiculos', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(dadosVeiculos)
             })
 
@@ -74,11 +45,12 @@ export default function VeiculosPage() {
         const buscaClientes = async () => {
             try {
 
-                const resposta = await fetch('http://localhost:3001/api/clientes')
+                const resposta = await fetch('http://localhost:3001/api/clientes', {
+                    headers: getAuthHeaders(),
+                })
 
-                const data = await resposta.json()
-
-                setClientes(data)
+                const data = await resposta.json();
+                setClientes(Array.isArray(data) ? data : []);
 
             } catch (error) {
                 console.error('Erro ao buscar clientes.', error)

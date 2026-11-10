@@ -1,22 +1,14 @@
 import { useState, useEffect } from "react";
 import ClienteForm from "../components/ClienteForm.jsx";
 
-// const clienteMockados = [
-//     // {
-//     //     id: '1',
-//     //     nome: 'Maycon',
-//     //     cpf: "123.456.789-10",
-//     //     telefone: "4003-8922",
-//     //     email: "maycon@gmail.com"
-//     // },
-//     // {
-//     //     id: '2',
-//     //     nome: 'Pereira',
-//     //     cpf: "987.456.789-10",
-//     //     telefone: "0800-8922",
-//     //     email: "pereirinha@gmail.com"
-//     // }
-//F]
+const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+
+    return {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+};
 
 export default function ClientePage() {
     const [clientes, setClientes] = useState([]);
@@ -42,9 +34,7 @@ export default function ClientePage() {
 
                 const resposta = await fetch('http://localhost:3001/api/clientes', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify(dadosClientes)
                 })
 
@@ -70,11 +60,12 @@ export default function ClientePage() {
         const buscaClientes = async () => {
             try {
 
-                const resposta = await fetch('http://localhost:3001/api/clientes')
+                const resposta = await fetch('http://localhost:3001/api/clientes', {
+                    headers: getAuthHeaders(),
+                });
 
-                const data = await resposta.json()
-
-                setClientes(data)
+                const data = await resposta.json();
+                setClientes(Array.isArray(data) ? data : []);
 
             } catch (error) {
                 console.error('Erro ao buscar clientes.', error)
